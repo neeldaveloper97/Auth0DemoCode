@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SimpleLogin.Shared;
 using System.Linq;
 
 namespace SimpleLogin.Server
@@ -22,8 +23,8 @@ namespace SimpleLogin.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-           
-
+            services.AddScoped<ISender, EmailService>();
+            services.Configure<Auth0>(Configuration.GetSection("Auth0"));
             services.AddControllersWithViews();
             services.AddRazorPages();
         }

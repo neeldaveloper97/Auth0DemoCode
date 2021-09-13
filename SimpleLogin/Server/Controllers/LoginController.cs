@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RestSharp;
@@ -17,11 +18,14 @@ namespace SimpleLogin.Server.Controllers
     public class LoginController : ControllerBase
     {
 
-        public IConfiguration Configuration { get; }
+        //public IConfiguration Configuration { get; }
+        public ISender Sender { get; }
+        private readonly Auth0 _Config;
 
-        public LoginController(IConfiguration configuration)
+        public LoginController(IOptions<Auth0> config, ISender sender)
         {
-            Configuration = configuration;
+            _Config = config.Value;
+            Sender = sender;
         }
 
         // POST api/<Login>
@@ -31,11 +35,10 @@ namespace SimpleLogin.Server.Controllers
             try
             {
                 //This entire code here can be used from service.
-
-                var APIURL = Configuration["Auth0:Auth0TokenEndPoint"];
-                var audiance = Configuration["Auth0:Audiance"];
-                var clientId = Configuration["Auth0:ClientId"];
-                var clientSecret = Configuration["Auth0:ClientSecret"];
+                var APIURL = _Config.Auth0TokenEndPoint;
+                var audiance = _Config.Audiance; 
+                var clientId = _Config.ClientId;
+                var clientSecret = _Config.ClientSecret;
 
                 var client = new RestClient(APIURL);
                 var request = new RestRequest(Method.POST);
@@ -70,33 +73,29 @@ namespace SimpleLogin.Server.Controllers
         [HttpPost]
         public IActionResult ConfirmEmail([FromBody] EmailAPIRequest emailAPIRequest)
         {
-            var factory = new ConnectionFactory() { HostName = "localhost" };
-            using (var connection = factory.CreateConnection())
+            string message;
+            if (emailAPIRequest != null && (!string.IsNullOrEmpty(emailAPIRequest.email)))
             {
-                using (var channel = connection.CreateModel())
+                //added service call
+                int nRet = Sender.Send(emailAPIRequest.email);
+                if (nRet > 0)
                 {
-                    channel.QueueDeclare(queue: "task_queue",
-                                    durable: true,
-                                    exclusive: false,
-                                    autoDelete: false,
-                                    arguments: null);
-
-                    //created a json message so that different type of messages can be handled at the receiving end.
-                    string message = "{\"email\":\"" + emailAPIRequest.email + "\",\"action\":\"verificationemail\"}";
-                    var body = Encoding.UTF8.GetBytes(message);
-                    var properties = channel.CreateBasicProperties();
-                    properties.Persistent = true;
-                    channel.BasicPublish(exchange: "",
-                     routingKey: "task_queue",
-                     basicProperties: properties,
-                     body: body);
+                    message = "Message queued to send verification email.";
                 }
+                else
+                {
+                    message = "Something went wrong.";
+                }
+            }
+            else
+            {
+                message = "Missing parameters";
             }
             return Ok(new
             {
-                Message = "Message queued to send verification email."
+                Message = message
             });
-        }
 
+        }
     }
 }
