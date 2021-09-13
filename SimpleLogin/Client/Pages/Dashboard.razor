@@ -1,0 +1,33 @@
+﻿@page "/dashboard"
+@inject NavigationManager NavigationManager
+@inject SimpleLogin.Client.Services.IAlertService AlertService
+@inject SimpleLogin.Client.Services.IHttpService HttpService
+@inject SimpleLogin.Client.Services.ILocalStorageService LocalStorageService
+@using SimpleLogin.Shared;
+
+<button class="btn btn-primary" @onclick="CallWithToken">Call API with Token</button>
+<br />
+<br />
+<button class="btn btn-primary" @onclick="GetVerification">Get Verification email</button>
+
+@code {
+
+    string lavelVal = string.Empty;
+    string APIUrl = "https://localhost:44310/api/private";
+    private async void CallWithToken()
+    {
+
+        var LoginResponse = await HttpService.Get<SimpleLogin.Shared.TestAPIResponse>(APIUrl, true);
+
+        AlertService.Success("Value From API : " + LoginResponse.Message, true);
+    }
+
+    private async void GetVerification()
+    {
+        var emailvalue = await LocalStorageService.GetItem<string>("email");
+        var APIUrl = NavigationManager.BaseUri + "login/confirmemail";
+        var LoginResponse = await HttpService.Post<SimpleLogin.Shared.TestAPIResponse>(APIUrl, new EmailAPIRequest { email= emailvalue }, false);
+        AlertService.Success(LoginResponse.Message, true);
+    }
+
+}
