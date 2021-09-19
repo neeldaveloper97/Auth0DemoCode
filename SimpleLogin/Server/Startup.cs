@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SimpleLogin.Database;
 using SimpleLogin.Shared;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +27,14 @@ namespace SimpleLogin.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddDbContext<Context>(c => c.UseSqlServer(Configuration.GetConnectionString("DefaultDatabase")));
+
+            services.AddDbContext<Context>(
+    options =>
+        options.UseSqlServer(
+            Configuration.GetConnectionString("DefaultDatabase"),
+            x => x.MigrationsAssembly("SimpleLogin.Database")));
+
             services.AddTransient<EmailSender>();
             services.AddTransient<DebugOutputSender>();
 

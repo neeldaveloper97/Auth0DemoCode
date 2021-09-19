@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPIApplication", "APISou
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rabbitmq-Receive-Service", "RabbitMQ-ReceiverService\Rabbitmq-Receive-Service.csproj", "{A9475EA5-4F3E-42BA-A802-EF3CDAF92B75}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleLogin.Database", "SimpleLogin.Database\SimpleLogin.Database.csproj", "{615F8687-488E-4CBD-8D43-F12E9175D003}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{A9475EA5-4F3E-42BA-A802-EF3CDAF92B75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9475EA5-4F3E-42BA-A802-EF3CDAF92B75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9475EA5-4F3E-42BA-A802-EF3CDAF92B75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{615F8687-488E-4CBD-8D43-F12E9175D003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{615F8687-488E-4CBD-8D43-F12E9175D003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{615F8687-488E-4CBD-8D43-F12E9175D003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{615F8687-488E-4CBD-8D43-F12E9175D003}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
