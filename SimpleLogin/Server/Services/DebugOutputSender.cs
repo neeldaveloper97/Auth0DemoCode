@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SimpleLogin.Server
 {
-    public class SMSService : ISender
+    public class DebugOutputSender : ISender
     {
-        public int Send(string email)
+        public int Send(string subject, string emailbody, string[] receivers, string sendername, string email                                                                       )
         {
             Debug.WriteLine("From SMS Service");
             return 1;

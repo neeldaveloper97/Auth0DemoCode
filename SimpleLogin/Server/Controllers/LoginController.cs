@@ -7,6 +7,7 @@ using RestSharp;
 using SimpleLogin.Shared;
 using System;
 using System.Text;
+using static SimpleLogin.Server.Startup;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -16,16 +17,14 @@ namespace SimpleLogin.Server.Controllers
     [Route("[controller]")]
     [ApiController]
     public class LoginController : ControllerBase
-    {
-
-        //public IConfiguration Configuration { get; }
-        public ISender Sender { get; }
+    { 
+        public readonly ISender Sender;
         private readonly Auth0 _Config;
 
-        public LoginController(IOptions<Auth0> config, ISender sender)
+        public LoginController(IOptions<Auth0> config, ISender sender, ServiceResolver serviceResolver)
         {
             _Config = config.Value;
-            Sender = sender;
+            Sender = serviceResolver(_Config.ServiceKey);
         }
 
         // POST api/<Login>
@@ -77,7 +76,7 @@ namespace SimpleLogin.Server.Controllers
             if (emailAPIRequest != null && (!string.IsNullOrEmpty(emailAPIRequest.email)))
             {
                 //added service call
-                int nRet = Sender.Send(emailAPIRequest.email);
+                int nRet = Sender.Send("","",null, "", emailAPIRequest.email);
                 if (nRet > 0)
                 {
                     message = "Message queued to send verification email.";

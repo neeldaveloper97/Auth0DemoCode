@@ -12,6 +12,6 @@ namespace SimpleLogin.Server
         /// </summary>
         /// <param name="email"></param>
         /// <returns></returns>
-        int Send (string email);
+        int Send (string subject, string emailbody, string[] receivers, string sendername, string email);
     }
 }

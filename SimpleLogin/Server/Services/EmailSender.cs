@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace SimpleLogin.Server
 {
-    public class EmailService : ISender
+    public class EmailSender : ISender
     {
-        public int Send(string email)
+        public int Send(string subject, string emailbody, string[] receivers, string sendername, string email)
         {
             int nRet = 0;
             try

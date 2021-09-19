@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SimpleLogin.Shared;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SimpleLogin.Server
@@ -18,12 +19,29 @@ namespace SimpleLogin.Server
         }
 
         public IConfiguration Configuration { get; }
+        public delegate ISender ServiceResolver(string key);
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ISender, EmailService>();
+            services.AddTransient<EmailSender>();
+            services.AddTransient<DebugOutputSender>();
+
+            services.AddTransient<ServiceResolver>(serviceProvider => key =>
+            {
+                switch (key)
+                {
+                    case "Email":
+                        return serviceProvider.GetService<EmailSender>();
+                    case "DebugOutput":
+                        return serviceProvider.GetService<DebugOutputSender>();
+                    default:
+                        throw new KeyNotFoundException(); // or maybe return null, up to you
+                }
+            });
+
+            //services.AddScoped<ISender, EmailSender>();
             services.Configure<Auth0>(Configuration.GetSection("Auth0"));
             services.AddControllersWithViews();
             services.AddRazorPages();

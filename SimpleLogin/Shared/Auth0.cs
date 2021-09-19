@@ -10,5 +10,6 @@ namespace SimpleLogin.Shared
         public string ClientId { get; set; }
         public string Auth0TokenEndPoint { get; set; }
         public string ClientSecret { get; set; }
+        public string ServiceKey { get; set; }
     }
 }
